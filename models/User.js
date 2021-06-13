@@ -1,7 +1,7 @@
 const db = require('../db')
 
 module.exports = db.define(
-    'user',
+    'users',
     {
         uid:
         {
@@ -42,7 +42,7 @@ module.exports = db.define(
         }
     },
     {
-        tableName: 'user',
+        tableName: 'users',
         freezeTableName: true,
         timestamps: false
     }
