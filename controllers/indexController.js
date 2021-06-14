@@ -1,6 +1,8 @@
 const { isValidEmail, isValidPassword } = require("../Utils/utils")
-const User = require('../models/User')
 const md5 = require("md5")
+
+const JWT = require('../Utils/jwt')
+const User = require('../models/User')
 
 exports.register = async (req, res) => {
     let { email, password, phone_no, address } = req.body
@@ -26,8 +28,10 @@ exports.register = async (req, res) => {
         console.log(user)
         console.log(created)
 
+        let token = await JWT.genToken({ email: email })
+
         if (created) {
-            res.status(200).json({ success: true, message: 'Registration success', data: {} })
+            res.status(200).json({ success: true, message: 'Registration success', data: { token: `Bearer ${token}` } })
         } else {
             res.status(400).json({ success: false, message: 'Account has been created, please create another account.', data: {} })
         }
@@ -53,7 +57,8 @@ exports.login = async (req, res) => {
         if (user === null) {
             res.status(400).json({ success: false, message: 'Email or Password is not correct', data: {} })
         } else {
-            res.status(200).json({ success: true, message: 'Logged in', data: {} })
+            let token = await JWT.genToken({ email: user.email })
+            res.status(200).json({ success: true, message: 'Logged in', data: { token: `Bearer ${token}` } })
         }
 
 
@@ -61,4 +66,12 @@ exports.login = async (req, res) => {
         console.log(e)
         res.status(400).json({ success: false, message: 'error occurs', data: {} })
     }
+}
+
+exports.addRecord = async(req, res) => {
+
+}
+
+exports.listRecords = async(req,res) => {
+
 }
