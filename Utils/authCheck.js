@@ -6,6 +6,7 @@ exports.authCheck = async (req, res, next) => {
         if (typeof token !== 'undefined') {
             const bearer = token.split(' ');
             const bearerToken = bearer[1];
+            console.log(bearerToken)
             let decoded = await JWT.verifyToken(bearerToken)
             if (decoded) {
                 req.decoded = decoded
@@ -20,6 +21,7 @@ exports.authCheck = async (req, res, next) => {
             })
         }
     } catch(e) {
-        res.status(400).json({ success: false, message: 'system error' })
+        console.log(e)
+        res.status(400).json({ success: false, message: 'auth check error / token expired' })
     }
 }

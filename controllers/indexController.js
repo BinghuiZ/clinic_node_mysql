@@ -1,10 +1,13 @@
-const { isValidEmail, isValidPassword } = require("../Utils/utils")
+const { isValidEmail, isValidPassword, isValidDate, convertDateTimeString } = require("../Utils/utils")
 const md5 = require("md5")
 
 const JWT = require('../Utils/jwt')
 const User = require('../models/User')
 const Doctor = require("../models/Doctor")
 const Record = require("../models/Record")
+const sequelize = require('../db')
+const { QueryTypes } = require("sequelize")
+var moment = require('moment');
 
 exports.register = async (req, res) => {
     let { email, password, phone_no, address } = req.body
@@ -83,10 +86,10 @@ exports.addRecord = async (req, res) => {
                 diagnosis: diagnosis,
                 medication: medication,
                 consultation: consultation,
-                date: new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''),
+                date: new Date(),
                 follow_up: follow_up
             })
-
+            // .toISOString().replace(/T/, ' ').replace(/\..+/, '')
             console.log(createdResult)
             res.status(200).json({ success: true, message: 'reord has been created' })
         }
@@ -99,5 +102,44 @@ exports.addRecord = async (req, res) => {
 }
 
 exports.listRecords = async (req, res) => {
+    let { from, to, limit, offset } = req.query
+    console.log(req.query)
+    try {
+        if (isNaN(limit) || isNaN(offset)) {
+            res.status(400).json({ success: false, message: 'data limit or offset is not number', data: {} })
+        }
+        if (limit < 0 || offset < 0) {
+            res.status(400).json({ success: false, message: 'data limit or offset is negative number', data: {} })
+        }
+        if (!isValidDate(from) || !isValidDate(to)) {
+            res.status(400).json({ success: false, message: 'date format is not correct', data: {} })
+        }
+        if (moment(from) > moment(to)) {
+            res.status(400).json({ success: false, message: 'from(Date) cannot be after to(Date)', data: {} })
+        }
 
+        let queryString = `SELECT c.name as clinic, d.name as doctor_name, r.patient_name, r.diagnosis, r.medication, r.consultation, r.date, r.follow_up
+                            FROM record as r, clinic as c, doctor as d
+                            WHERE r.doctor_id = d.doctor_id AND d.clinic_id = c.clinic_id
+                            AND (r.date BETWEEN '${from}' AND '${to}')
+                            ORDER BY r.rid ASC LIMIT ${offset}, ${limit}`
+        const result = await sequelize.query(queryString, { type: QueryTypes.SELECT })
+        const finalJson = result.map((data) => {
+            return {
+                clinic: data.clinic,
+                doctor_name: data.doctor_name,
+                patient_name: data.patient_name,
+                diagnosis: data.diagnosis,
+                medication: data.medication,
+                consultation: data.consultation,
+                date: convertDateTimeString(data.date),
+                follow_up: data.follow_up
+            }
+        })
+
+        res.status(200).json({ success: true, message: 'reord has been created', data: finalJson })
+    } catch (e) {
+        console.log(e)
+        res.status(400).json({ success: false, message: 'error occurs', data: {} })
+    }
 }
