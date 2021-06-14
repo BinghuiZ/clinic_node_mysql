@@ -3,7 +3,7 @@ const Sequelize = require('sequelize')
 const sequelize = new Sequelize('clinic', 'root', 'root', {
     host: 'localhost',
     dialect: 'mysql',
-    port: '8889',
+    port: '3306',
     operatorsAliases: 0,
     timezone: '+08:00',
 
