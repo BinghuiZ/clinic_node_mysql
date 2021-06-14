@@ -3,6 +3,8 @@ const md5 = require("md5")
 
 const JWT = require('../Utils/jwt')
 const User = require('../models/User')
+const Doctor = require("../models/Doctor")
+const Record = require("../models/Record")
 
 exports.register = async (req, res) => {
     let { email, password, phone_no, address } = req.body
@@ -68,10 +70,34 @@ exports.login = async (req, res) => {
     }
 }
 
-exports.addRecord = async(req, res) => {
+exports.addRecord = async (req, res) => {
+    let { doctor_name, patient_name, diagnosis, medication, consultation, follow_up } = req.body
+    try {
+        let doc = await Doctor.findOne({ where: { name: doctor_name } })
+        if (doc === null) {
+            res.status(400).json({ success: false, message: 'Doctor not found', data: {} })
+        } else {
+            let createdResult = await Record.create({
+                doctor_id: doc.doctor_id,
+                patient_name: patient_name,
+                diagnosis: diagnosis,
+                medication: medication,
+                consultation: consultation,
+                date: new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''),
+                follow_up: follow_up
+            })
 
+            console.log(createdResult)
+            res.status(200).json({ success: true, message: 'reord has been created' })
+        }
+
+
+    } catch (e) {
+        console.log(e)
+        res.status(400).json({ success: false, message: 'error occurs', data: {} })
+    }
 }
 
-exports.listRecords = async(req,res) => {
+exports.listRecords = async (req, res) => {
 
 }

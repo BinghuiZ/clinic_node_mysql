@@ -1,4 +1,3 @@
-const { DataTypes } = require('sequelize/types')
 const db = require('../db')
 const Clinic = require('./Clinic')
 

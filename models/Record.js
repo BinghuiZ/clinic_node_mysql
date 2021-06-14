@@ -1,4 +1,4 @@
-const { DataTypes } = require('sequelize/types')
+const { DataTypes } = require('sequelize')
 const db = require('../db')
 const Doctor = require('./Doctor')
 
@@ -24,21 +24,21 @@ module.exports = db.define(
         },
         patient_name:
         {
-            type: DataTypes.String,
+            type: DataTypes.STRING,
             allowNull: false,
             defaultValue: null,
             primaryKey: false
         },
         diagnosis:
         {
-            type: DataTypes.String,
+            type: DataTypes.STRING,
             allowNull: false,
             defaultValue: null,
             primaryKey: false
         },
         medication:
         {
-            type: DataTypes.String,
+            type: DataTypes.STRING,
             defaultValue: null,
             primaryKey: false
         },
