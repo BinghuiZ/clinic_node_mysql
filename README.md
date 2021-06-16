@@ -32,6 +32,12 @@ To add new record from API, you will need to add the following doctor name to th
   
 ## API Reference
 
+#### Domain
+
+```http
+  localhost:3000
+```
+
 #### Create system account
 
 ```http
