@@ -1,11 +1,20 @@
 const Sequelize = require('sequelize')
 
+var reconnectOptions = {
+    max_retries: 999,
+    onRetry: function(count) {
+      console.log("connection lost, trying to reconnect ("+count+")");
+    }
+  };
+
 const sequelize = new Sequelize('clinic', 'root', 'root', {
-    host: 'localhost',
+    host: 'mysqldb',
     dialect: 'mysql',
     port: '3306',
     operatorsAliases: 0,
     timezone: '+08:00',
+
+    reconnect: reconnectOptions || true,
 
     pool: {
         max: 5,
