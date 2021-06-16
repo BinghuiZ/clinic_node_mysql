@@ -3,6 +3,17 @@
 
 A project using Node.js and MySQL to create a web API server
 
+## Set up & Run 
+
+Clone the project and run in docker
+
+```bash 
+  git clone https://github.com/BinghuiZ/clinic_node_mysql.git
+  cd ~/clinic_node_mysql
+
+  docker-compose up
+```
+**Ready to go**
 
 ## Doctor Name for API Testing
 
